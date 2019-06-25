@@ -1,0 +1,34 @@
+{
+  "name": "Flush DNS",
+  "author": "Mactavish",
+  "version": "0.1.0",
+  "description": "Automatic flush DNS in Chrome with one click",
+  "manifest_version": 2,
+  "icons": {
+    "16": "images/icon-16px.png",
+    "32": "images/icon-32px.png",
+    "48": "images/icon-64px.png",
+    "128": "images/icon-128px.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "permissions": ["background", "tabs", "notifications"],
+  "browser_action": {
+    "default_icon": {
+      "16": "images/icon-16px.png",
+      "32": "images/icon-32px.png",
+      "48": "images/icon-64px.png",
+      "128": "images/icon-128px.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["chrome://net-internals/*"],
+      "run_at": "document_idle",
+      "js": ["contentScript.js"]
+    }
+  ],
+  "web_accessible_resources": ["inject.js"]
+}
