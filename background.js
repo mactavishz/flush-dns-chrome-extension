@@ -1,7 +1,10 @@
 let chromeNetInternalTabId = null
 const chromeNetInternalsUrl = 'chrome://net-internals/#dns'
 
-const ACTION_STRATEGIES = {
+const EVENT_STRATEGIES = {
+  'DNSFlushScriptLoaded': function DNSFlushScriptLoadedHandler () {
+    chrome.tabs.sendMessage(chromeNetInternalTabId, { action: 'DO_FLUSH' })
+  },
   'DNSFlushCompleted': function DNSFlushCompletedHandler () {
     sendSuccessNotification('Congrats, DNS Flushed')
     closeTab(chromeNetInternalTabId)
@@ -18,15 +21,17 @@ chrome.browserAction.onClicked.addListener(() => {
 
 chrome.runtime.onConnect.addListener(portFrom => {
   if(portFrom.name === 'content-script') {
-     portFrom.onMessage.addListener((message = { action: 'none' }) => {
-       const handler = ACTION_STRATEGIES[message.action]
+     portFrom.onMessage.addListener((data = { event: 'none' }) => {
+       const handler = EVENT_STRATEGIES[data.event]
        if (handler) handler.call(null)
      })
   }
 })
 
 function openTab (url = '') {
-  chrome.tabs.create({ url }, tab => chromeNetInternalTabId = tab.id)
+  chrome.tabs.create({ url }, tab => {
+    chromeNetInternalTabId = tab.id
+  })
 }
 
 function closeTab (id = null) {

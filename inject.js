@@ -1,4 +1,4 @@
-;(function () {
+window.addEventListener('FLUSH_DNS', function FlushDNSHandler () {
   try {
     if (chrome.send) {
       chrome.send('clearHostResolverCache')
@@ -8,12 +8,13 @@
       throw new ReferenceError(`Can not find "send" method on chrome object`)
     }
     window.postMessage({
-      action: 'DNSFlushCompleted'
+      event: 'DNSFlushCompleted'
     }, '*')
   } catch (err) {
     console.warn(err)
     window.postMessage({
-      action: 'DNSFlushFailed'
+      event: 'DNSFlushFailed'
     }, '*')
   }
-})()
+})
+
